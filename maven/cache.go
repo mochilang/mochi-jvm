@@ -66,8 +66,8 @@ func (c *Cache) Put(sha256hex string, data []byte) error {
 	}
 	tmpPath := tmp.Name()
 	defer func() {
-		tmp.Close()
-		os.Remove(tmpPath) // no-op if rename succeeded
+		_ = tmp.Close()
+		_ = os.Remove(tmpPath) // no-op if rename succeeded
 	}()
 	if _, err := tmp.Write(data); err != nil {
 		return fmt.Errorf("maven: cache write: %w", err)
@@ -75,7 +75,9 @@ func (c *Cache) Put(sha256hex string, data []byte) error {
 	if err := tmp.Sync(); err != nil {
 		return fmt.Errorf("maven: cache sync: %w", err)
 	}
-	tmp.Close()
+	if err := tmp.Close(); err != nil {
+		return fmt.Errorf("maven: cache close tmp: %w", err)
+	}
 	if err := os.Rename(tmpPath, dest); err != nil {
 		return fmt.Errorf("maven: cache rename to %s: %w", dest, err)
 	}

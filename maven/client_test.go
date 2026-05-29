@@ -34,11 +34,11 @@ func TestClientFetchJAR(t *testing.T) {
 	checksum := sha1Hex(jarData)
 
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		switch {
-		case r.URL.Path == "/com/google/guava/guava/33.4.8-jre/guava-33.4.8-jre.jar":
-			w.Write(jarData)
-		case r.URL.Path == "/com/google/guava/guava/33.4.8-jre/guava-33.4.8-jre.jar.sha1":
-			fmt.Fprintf(w, "%s  guava-33.4.8-jre.jar\n", checksum)
+		switch r.URL.Path {
+		case "/com/google/guava/guava/33.4.8-jre/guava-33.4.8-jre.jar":
+			w.Write(jarData) //nolint:errcheck
+		case "/com/google/guava/guava/33.4.8-jre/guava-33.4.8-jre.jar.sha1":
+			fmt.Fprintf(w, "%s  guava-33.4.8-jre.jar\n", checksum) //nolint:errcheck
 		default:
 			http.NotFound(w, r)
 		}
@@ -74,12 +74,12 @@ func TestClientFetchChecksumMismatch(t *testing.T) {
 	jarData := minimalJAR()
 
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		switch {
-		case r.URL.Path == "/com/example/foo/1.0/foo-1.0.jar":
-			w.Write(jarData)
-		case r.URL.Path == "/com/example/foo/1.0/foo-1.0.jar.sha1":
+		switch r.URL.Path {
+		case "/com/example/foo/1.0/foo-1.0.jar":
+			w.Write(jarData) //nolint:errcheck
+		case "/com/example/foo/1.0/foo-1.0.jar.sha1":
 			// Return wrong checksum.
-			fmt.Fprintf(w, "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef\n")
+			fmt.Fprintf(w, "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef\n") //nolint:errcheck
 		default:
 			http.NotFound(w, r)
 		}

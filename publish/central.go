@@ -60,7 +60,7 @@ func (c *Client) Upload(bundlePath string, dryRun bool, bundleName string) (stri
 	if err != nil {
 		return "", fmt.Errorf("upload: open bundle: %w", err)
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 
 	var body bytes.Buffer
 	mw := multipart.NewWriter(&body)

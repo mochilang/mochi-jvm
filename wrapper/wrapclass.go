@@ -84,15 +84,6 @@ func isPublicMethod(modifiers []string) bool {
 	return false
 }
 
-// isFinalField returns true if the modifiers contain "final".
-func isFinalField(modifiers []string) bool {
-	for _, m := range modifiers {
-		if m == "final" {
-			return true
-		}
-	}
-	return false
-}
 
 // SynthResult is the result of synthesising a single class.
 type SynthResult struct {

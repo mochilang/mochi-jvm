@@ -56,7 +56,7 @@ func BuildBundle(spec BundleSpec, outDir string) (*BundleResult, error) {
 	if err != nil {
 		return nil, fmt.Errorf("bundle: create zip: %w", err)
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 
 	zw := zip.NewWriter(f)
 
@@ -118,7 +118,7 @@ func DryRun(bundlePath, groupID, artifactID, version string) error {
 	if err != nil {
 		return fmt.Errorf("dry-run: open zip: %w", err)
 	}
-	defer r.Close()
+	defer func() { _ = r.Close() }()
 
 	groupPath := strings.ReplaceAll(groupID, ".", "/")
 	prefix := fmt.Sprintf("%s/%s/%s", groupPath, artifactID, version)
@@ -177,7 +177,7 @@ func readZipEntry(f *zip.File) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer rc.Close()
+	defer func() { _ = rc.Close() }()
 	return io.ReadAll(rc)
 }
 
